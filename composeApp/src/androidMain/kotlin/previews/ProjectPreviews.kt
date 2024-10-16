@@ -6,10 +6,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.example.project.data.ExpenseManager
 import org.example.project.model.Expense
 import org.example.project.model.ExpenseCategory
 import org.example.project.ui.AllExpensesHeader
 import org.example.project.ui.ExpensesItem
+import org.example.project.ui.ExpensesScreen
 import org.example.project.ui.ExpensesTotalHeader
 
 @Preview(
@@ -48,13 +50,20 @@ fun ExpensesItemPreview() {
         modifier = Modifier.padding(16.dp)
     ) {
         ExpensesItem(
-            expense = Expense(
-                id = 1L,
-                amount = 100.0,
-                category = ExpenseCategory.SNACKS,
-                description = "SNACKS",
-            ),
+            expense = ExpenseManager.fakeExpenseList[0],
             onExpenseClick = {}
         )
+    }
+}
+
+@Preview(
+    showBackground = true
+)
+@Composable
+fun ExpensesScreenPreview() {
+    Box(
+        modifier = Modifier.padding(16.dp)
+    ) {
+        ExpensesScreen {  }
     }
 }
