@@ -44,4 +44,39 @@ object ExpenseManager {
             description = "OTHER"
         )
     )
+
+    fun addNewExpense(
+        expense: Expense
+    ){
+        fakeExpenseList.add(expense.copy(id = currentid++))
+    }
+
+    fun editExpense(
+        expense: Expense
+    ){
+        val index = fakeExpenseList.indexOfFirst {
+            it.id == expense.id
+        }
+
+        if (index != -1) {
+            fakeExpenseList[index] = fakeExpenseList[index].copy(
+                amount = expense.amount,
+                category = expense.category,
+                description = expense.description
+            )
+        }
+    }
+
+    fun getCategories(): List<ExpenseCategory> {
+        return  listOf(
+            ExpenseCategory.GROCERIES,
+            ExpenseCategory.HOUSE,
+            ExpenseCategory.CAR,
+            ExpenseCategory.PARTY,
+            ExpenseCategory.OTHER,
+            ExpenseCategory.SNACKS
+        )
+    }
+
+    
 }
