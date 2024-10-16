@@ -25,7 +25,7 @@ fun AppTheme(
 
 @Composable
 fun getColorsTheme(): DarkModeColors {
-    val isDarkMode = true
+    val isDarkMode = false
 
     val Purple = Color(0xFF6A66FF)
     val ColorExpenseItem = if (isDarkMode) Color(0xFF090808) else Color(0xFFF1F1F1)

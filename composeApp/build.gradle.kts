@@ -52,6 +52,8 @@ kotlin {
             // Navigation PreCompose
             api("moe.tlaster:precompose:1.6.2")
             api("moe.tlaster:precompose-viewmodel:1.6.2")
+
+            api(compose.materialIconsExtended)
         }
         iosMain.dependencies {
             // iOS Dependencies
@@ -90,6 +92,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.foundation.android)
     debugImplementation(compose.uiTooling)
 }
 
