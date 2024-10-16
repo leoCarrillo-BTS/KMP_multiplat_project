@@ -67,6 +67,17 @@ object ExpenseManager {
         }
     }
 
+    fun deleteExpense(
+        expense: Expense
+    ): List<Expense> {
+        val index = fakeExpenseList.indexOfFirst {
+            it.id == expense.id
+        }
+
+        fakeExpenseList.removeAt(index)
+        return fakeExpenseList
+    }
+
     fun getCategories(): List<ExpenseCategory> {
         return  listOf(
             ExpenseCategory.GROCERIES,
@@ -78,5 +89,5 @@ object ExpenseManager {
         )
     }
 
-    
+
 }
