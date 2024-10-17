@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.dp
 import org.example.project.data.ExpenseManager
 import org.example.project.model.Expense
 import org.example.project.model.ExpenseCategory
+import org.example.project.presentation.ExpenseUIState
 import org.example.project.ui.AllExpensesHeader
 import org.example.project.ui.ExpensesItem
 import org.example.project.ui.ExpensesScreen
@@ -64,6 +65,12 @@ fun ExpensesScreenPreview() {
     Box(
         modifier = Modifier.padding(16.dp)
     ) {
-        ExpensesScreen {  }
+        ExpensesScreen(
+            uiState = ExpenseUIState(
+                expenses = ExpenseManager.fakeExpenseList,
+                total = 1234.56
+            ),
+            onExpenseClick = { }
+        )
     }
 }

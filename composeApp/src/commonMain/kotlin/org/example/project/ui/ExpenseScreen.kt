@@ -33,10 +33,12 @@ import androidx.compose.ui.unit.sp
 import org.example.project.data.ExpenseManager
 import org.example.project.getColorsTheme
 import org.example.project.model.Expense
+import org.example.project.presentation.ExpenseUIState
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ExpensesScreen(
+    uiState: ExpenseUIState,
     onExpenseClick: (expense: Expense) -> Unit
 ) {
 
@@ -54,11 +56,11 @@ fun ExpensesScreen(
                 modifier = Modifier.background(colors.BackgroundColor)
             ) {
                 // Composables
-                ExpensesTotalHeader(12345.67)
+                ExpensesTotalHeader(uiState.total)
                 AllExpensesHeader()
             }
         }
-        items(ExpenseManager.fakeExpenseList) { item: Expense ->  
+        items(uiState.expenses) { item: Expense ->
             // Composables
             ExpensesItem(
                 expense = item,

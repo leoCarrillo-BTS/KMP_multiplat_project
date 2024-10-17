@@ -1,23 +1,26 @@
 package org.example.project
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Apps
+import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModel
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-
-import kotlinproject.composeapp.generated.resources.Res
-import kotlinproject.composeapp.generated.resources.compose_multiplatform
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import moe.tlaster.precompose.PreComposeApp
+import moe.tlaster.precompose.navigation.Navigator
+import moe.tlaster.precompose.navigation.path
+import moe.tlaster.precompose.navigation.rememberNavigator
+import org.example.project.data.TopBarTitleTypes
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
@@ -28,13 +31,52 @@ fun App() {
         val colors = getColorsTheme()
 
         AppTheme {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Text("Bienvenidos", color = colors.TextColor)
-                Text("Curso KMP : PreComposeApp")
-                Text("Curso KMP : PreComposeApp_2")
-                Text("Curso KMP : PreComposeApp_3")
+
+            val navigator = rememberNavigator()
+            val topBarTitle = getTopBarTitle(navigator)
+            val isEditOrAddExpenses = topBarTitle != TopBarTitleTypes.DASHBOARD.value
+
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        elevation = 10.dp,
+                        title = {
+                            Text(
+                                text = topBarTitle,
+                                color = colors.TextColor,
+                                fontSize = 25.sp,
+                            )
+                        },
+                        backgroundColor = colors.BackgroundColor,
+                        navigationIcon = {
+                            if (isEditOrAddExpenses) {
+                                IconButton(
+                                    onClick = {
+                                        navigator.popBackStack()
+                                    }
+                                ) {
+                                    Icon(
+                                        modifier = Modifier.padding(start = 16.dp),
+                                        imageVector = Icons.Default.ArrowBackIosNew,
+                                        tint = colors.TextColor,
+                                        contentDescription = "Back icon"
+                                    )
+                                }
+                            } else {
+                                Icon(
+                                    modifier = Modifier.padding(start = 16.dp),
+                                    imageVector = Icons.Default.Apps,
+                                    tint = colors.TextColor,
+                                    contentDescription = "Dashboard icon"
+                                )
+                            }
+                        }
+                    )
+                },
+
+                ) {
+
             }
         }
     }
@@ -47,11 +89,20 @@ fun App() {
     */
 }
 
-fun Ejemplo(click: () -> Unit) {
+@Composable
+fun getTopBarTitle(navigator: Navigator): String {
+    var topBarTitle = TopBarTitleTypes.DASHBOARD
 
-}
+    val isOnAddExpenses =
+        navigator.currentEntry.collectAsState(null).value?.route?.route.equals("/addExpenses/{id}")
+    if (isOnAddExpenses) {
+        topBarTitle = TopBarTitleTypes.ADD
+    }
 
-// reconoce clases de la libreria de Navegación
-class CustomVM : ViewModel() {
+    val isOnEditExpenses = navigator.currentEntry.collectAsState(null).value?.path<Long>("id")
+    isOnEditExpenses?.let {
+        topBarTitle = TopBarTitleTypes.EDIT
+    }
 
+    return topBarTitle.value
 }
