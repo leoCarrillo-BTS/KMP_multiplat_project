@@ -43,7 +43,8 @@ fun Navigation(
             val expenseToEditOrAdd = idFromPath?.let { id -> viewModel.getExpenseWithId(id)}
             
             ExpensesDetailScreen(
-                expenseToEdit = expenseToEditOrAdd
+                expenseToEdit = expenseToEditOrAdd,
+                categoryList = viewModel.getCategories()
             ) {
                 if (expenseToEditOrAdd == null) {
                     viewModel.addExpense(it)

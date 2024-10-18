@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.data.ExpenseManager
@@ -11,6 +12,7 @@ import org.example.project.model.Expense
 import org.example.project.model.ExpenseCategory
 import org.example.project.presentation.ExpenseUIState
 import org.example.project.ui.AllExpensesHeader
+import org.example.project.ui.ExpenseAmount
 import org.example.project.ui.ExpensesItem
 import org.example.project.ui.ExpensesScreen
 import org.example.project.ui.ExpensesTotalHeader
@@ -74,3 +76,20 @@ fun ExpensesScreenPreview() {
         )
     }
 }
+
+@Preview(
+    showBackground = true
+)
+@Composable
+fun ExpenseAmountPreview() {
+    Box(
+        modifier = Modifier.padding(16.dp)
+    ) {
+        ExpenseAmount(
+            priceContent = 12.0,
+            onPriceChanged = {  },
+            keyboardController = LocalSoftwareKeyboardController.current
+        )
+    }
+}
+
