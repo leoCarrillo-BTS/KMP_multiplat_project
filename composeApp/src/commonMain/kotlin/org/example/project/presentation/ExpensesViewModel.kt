@@ -43,7 +43,7 @@ class ExpensesViewModel(
         }
     }
 
-    private fun addExpense(
+    fun addExpense(
         expense: Expense
     ) {
         viewModelScope.launch {
@@ -52,7 +52,7 @@ class ExpensesViewModel(
         }
     }
 
-    private fun editExpense(
+    fun editExpense(
         expense: Expense
     ) {
         viewModelScope.launch {
