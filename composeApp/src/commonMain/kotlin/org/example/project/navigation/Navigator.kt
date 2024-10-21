@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
+import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.navigation.path
@@ -15,15 +16,14 @@ import org.example.project.getColorsTheme
 import org.example.project.presentation.ExpensesViewModel
 import org.example.project.ui.ExpensesDetailScreen
 import org.example.project.ui.ExpensesScreen
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun Navigation(
     navigator: Navigator
 ) {
     val colors = getColorsTheme()
-    val viewModel = viewModel(modelClass = ExpensesViewModel::class) {
-        ExpensesViewModel(ExpenseRepoImpl(ExpenseManager))
-    }
+    val viewModel = koinViewModel(ExpensesViewModel::class) { parametersOf() }
 
     NavHost(
         modifier = Modifier.background(colors.BackgroundColor),
