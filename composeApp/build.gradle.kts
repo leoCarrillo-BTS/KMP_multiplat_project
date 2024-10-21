@@ -58,6 +58,10 @@ kotlin {
         iosMain.dependencies {
             // iOS Dependencies
         }
+
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
     }
 }
 
