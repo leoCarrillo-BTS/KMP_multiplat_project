@@ -7,13 +7,24 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
+    id("app.cash.sqldelight") version "2.0.1"
+}
+
+sqldelight {
+    databases {
+        create("AppDatabase") {
+            packageName.set("com.expenseApp.db")
+        }
+    }
 }
 
 kotlin {
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "17"
+            }
         }
     }
     
@@ -38,6 +49,9 @@ kotlin {
             implementation(project.dependencies.platform("io.insert-koin:koin-bom:4.0.0"))
             implementation("io.insert-koin:koin-core")
             implementation("io.insert-koin:koin-android")
+
+            implementation("app.cash.sqldelight:android-driver:2.0.2")
+
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -69,6 +83,8 @@ kotlin {
         }
         iosMain.dependencies {
             // iOS Dependencies
+            implementation("app.cash.sqldelight:native-driver:2.0.2")
+            implementation("co.touchlab:stately-common:2.0.5")
         }
 
         commonTest.dependencies {
