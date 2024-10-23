@@ -72,7 +72,8 @@ fun ExpensesScreenPreview() {
                 expenses = ExpenseManager.fakeExpenseList,
                 total = 1234.56
             ),
-            onExpenseClick = { }
+            onExpenseClick = { },
+            onDeleteExpense = { }
         )
     }
 }

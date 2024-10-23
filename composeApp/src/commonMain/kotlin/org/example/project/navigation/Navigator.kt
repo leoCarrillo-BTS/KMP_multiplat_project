@@ -33,9 +33,15 @@ fun Navigation(
         scene(route = "/home") {
 
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-            ExpensesScreen(uiState) {
-                navigator.navigate("/addExpenses/${it.id}")
-            }
+            ExpensesScreen(
+                uiState = uiState,
+                onExpenseClick = {
+                    navigator.navigate("/addExpenses/${it.id}")
+                },
+                onDeleteExpense = {
+                    viewModel.deleteExpense(it.id)
+                }
+            )
         }
 
         scene(route = "/addExpenses/{id}?") {

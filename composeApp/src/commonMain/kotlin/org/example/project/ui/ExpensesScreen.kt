@@ -30,17 +30,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.getColorsTheme
 import org.example.project.model.Expense
 import org.example.project.presentation.ExpensesUIState
+import org.example.project.utils.SwipeToDeleteContainer
+import kotlin.math.exp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ExpensesScreen(
     uiState: ExpensesUIState,
-    onExpenseClick: (expense: Expense) -> Unit
+    onExpenseClick: (expense: Expense) -> Unit,
+    onDeleteExpense: (expense: Expense) -> Unit,
 ) {
 
     val colors = getColorsTheme()
@@ -57,28 +61,52 @@ fun ExpensesScreen(
 
         is ExpensesUIState.Success -> {
 
-            LazyColumn(
-                modifier = Modifier.padding(
-                    horizontal = 16.dp,
-                    vertical = 16.dp
-                ),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                stickyHeader {
-                    Column(
-                        modifier = Modifier.background(colors.BackgroundColor)
-                    ) {
-                        // Composables
-                        ExpensesTotalHeader(uiState.total)
-                        AllExpensesHeader()
-                    }
-                }
-                items(uiState.expenses) { item: Expense ->
-                    // Composables
-                    ExpensesItem(
-                        expense = item,
-                        onExpenseClick = onExpenseClick
+            if (uiState.expenses.isEmpty()) {
+
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        "No expenses found, please add an expense",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.body1
                     )
+                }
+
+            } else {
+                LazyColumn(
+                    modifier = Modifier.padding(
+                        horizontal = 16.dp,
+                        vertical = 16.dp
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    stickyHeader {
+                        Column(
+                            modifier = Modifier.background(colors.BackgroundColor)
+                        ) {
+                            // Composables
+                            ExpensesTotalHeader(uiState.total)
+                            AllExpensesHeader()
+                        }
+                    }
+                    items(
+                        items = uiState.expenses,
+                        key = { it.id }
+                    ) { expense: Expense ->
+                        // Composables
+                        SwipeToDeleteContainer(
+                            item = expense,
+                            onDelete = onDeleteExpense
+                        ) {
+                            ExpensesItem(
+                                expense = expense,
+                                onExpenseClick = onExpenseClick
+                            )
+                        }
+                    }
                 }
             }
         }
