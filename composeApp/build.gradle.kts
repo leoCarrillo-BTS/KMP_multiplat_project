@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
     id("app.cash.sqldelight") version "2.0.2"
+    kotlin("plugin.serialization") version "2.0.21"
 }
 
 sqldelight {
@@ -27,7 +28,7 @@ kotlin {
             }
         }
     }
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -38,9 +39,9 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     sourceSets {
-        
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -52,6 +53,8 @@ kotlin {
 
             implementation("app.cash.sqldelight:android-driver:2.0.2")
 
+            implementation(libs.ktor.client.okhttp)
+            implementation(libs.kotlinx.coroutines.android)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -80,11 +83,16 @@ kotlin {
             implementation("io.insert-koin:koin-core")
             implementation("io.insert-koin:koin-compose")
 
+            implementation(libs.ktor.client.core)
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.ktor.serialization)
+            implementation(libs.ktor.content.negotiation)
         }
         iosMain.dependencies {
             // iOS Dependencies
             implementation("app.cash.sqldelight:native-driver:2.0.2")
             implementation("co.touchlab:stately-common:2.0.5")
+            implementation(libs.ktor.client.darwin)
         }
 
         commonTest.dependencies {
@@ -127,4 +135,3 @@ dependencies {
     implementation(libs.androidx.foundation.android)
     debugImplementation(compose.uiTooling)
 }
-

@@ -1,6 +1,7 @@
 package org.example.project.presentation
 
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -11,67 +12,92 @@ import org.example.project.domain.ExpenseRepository
 import org.example.project.model.Expense
 import org.example.project.model.ExpenseCategory
 
-data class ExpenseUIState(
-    val expenses: List<Expense> = emptyList(),
-    val total: Double = 0.0
-)
+
+sealed class ExpensesUIState {
+    object Loading : ExpensesUIState()
+    data class Success(val expenses: List<Expense>, val total: Double) : ExpensesUIState()
+    data class Error(val message: String) : ExpensesUIState()
+}
 
 class ExpensesViewModel(
     private val repo: ExpenseRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ExpenseUIState())
+    private val _uiState = MutableStateFlow<ExpensesUIState>(ExpensesUIState.Loading)
     val uiState = _uiState.asStateFlow()
-    private val allExpenses: MutableList<Expense> = mutableListOf()
 
     init {
-        getAllExpenses()
+        getExpenseList()
     }
 
-    private fun updateExpenseList() {
+    private fun getExpenseList() {
         viewModelScope.launch {
-            allExpenses = repo.getAllExpenses().toMutableList()
-            updateState()
+            try {
+
+                while (true) {
+                    delay(2000)
+                    val expenses = repo.getAllExpenses()
+                    _uiState.value = ExpensesUIState.Success(expenses, expenses.sumOf { it.amount })
+                }
+
+            } catch (e: Exception) {
+                _uiState.value = ExpensesUIState.Error(e.message ?: "Error")
+            }
         }
     }
 
-    private fun updateState() {
-        _uiState.update { state ->
-            state.copy(
-                expenses = allExpenses,
-                total = allExpenses.sumOf { it.amount }
-            )
+    private suspend fun updateExpenseList() {
+        try {
+            val expenses = repo.getAllExpenses()
+            _uiState.value = ExpensesUIState.Success(expenses, expenses.sumOf { it.amount })
+        } catch (e: Exception) {
+            _uiState.value = ExpensesUIState.Error(e.message ?: "Error")
         }
-    }
-
-    private fun getAllExpenses() {
-        repo.getAllExpenses()
-        updateExpenseList()
     }
 
     fun addExpense(
         expense: Expense
     ) {
-        repo.addExpense(expense)
-        updateExpenseList()
+        viewModelScope.launch {
+            try {
+                repo.addExpense(expense)
+                updateExpenseList()
+            } catch (e: Exception) {
+                _uiState.value = ExpensesUIState.Error(e.message ?: "Error")
+            }
+        }
     }
 
     fun editExpense(
         expense: Expense
     ) {
-        repo.editExpense(expense)
-        updateExpenseList()
+        viewModelScope.launch {
+            try {
+                repo.editExpense(expense)
+                updateExpenseList()
+            } catch (e: Exception) {
+                _uiState.value = ExpensesUIState.Error(e.message ?: "Error")
+
+            }
+        }
     }
 
     private fun deleteExpense(
         expense: Expense
     ) {
-        repo.deleteExpense(expense)
-        updateExpenseList()
+        viewModelScope.launch {
+            try {
+                repo.deleteExpense(expense)
+                updateExpenseList()
+            } catch (e: Exception) {
+                _uiState.value = ExpensesUIState.Error(e.message ?: "Error")
+
+            }
+        }
     }
 
-    fun getExpenseWithId(id:Long): Expense {
-        return allExpenses.first{ it.id == id }
+    fun getExpenseWithId(id: Long): Expense? {
+        return (_uiState.value as? ExpensesUIState.Success)?.expenses?.firstOrNull { it.id == id }
     }
 
     fun getCategories(): List<ExpenseCategory> {
