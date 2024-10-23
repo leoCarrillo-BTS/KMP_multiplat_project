@@ -13,7 +13,7 @@ class MainApplication: Application() {
             androidContext(this@MainApplication)
             androidLogger()
             // modules
-            modules(appModule())
+            modules(appModule(AppDatabase.invoke(DatabaseDriverFactory(this@MainApplication).createDriver())))
         }
     }
 }

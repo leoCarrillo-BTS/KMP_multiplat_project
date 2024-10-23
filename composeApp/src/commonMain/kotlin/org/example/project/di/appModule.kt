@@ -8,9 +8,7 @@ import org.koin.core.module.dsl.createdAtStart
 import org.koin.core.module.dsl.withOptions
 import org.koin.dsl.module
 
-fun appModule() = module {
-
-    single { ExpenseManager }.withOptions { createdAtStart() }
-    single<ExpenseRepository> { ExpenseRepoImpl(get()) }
+fun appModule(appDatabase: AppDatabase) = module {
+    single<ExpenseRepository> { ExpenseRepoImpl(appDatabase) }
     factory { ExpensesViewModel(get()) }
 }

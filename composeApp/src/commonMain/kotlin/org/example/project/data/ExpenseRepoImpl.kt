@@ -5,32 +5,50 @@ import org.example.project.model.Expense
 import org.example.project.model.ExpenseCategory
 
 class ExpenseRepoImpl(
-    private val expenseManager: ExpenseManager
+    private val appDatabase: AppDatabase
 ): ExpenseRepository {
 
+    private val queries = appDatabase.expenseDbQueries
+
     override fun getAllExpenses(): List<Expense> {
-        return expenseManager.fakeExpenseList
+        return queries.selectAll().executeAsList().map {
+            Expense(
+                id = it.id,
+                amount = it.amount,
+                category = ExpenseCategory.valueOf(it.categoryName),
+                description = it.description
+            )
+        }
     }
 
     override fun addExpense(expense: Expense) {
-        expenseManager.addNewExpense(
-            expense = expense
-        )
+        queries.transaction {
+            queries.insert (
+                amount = expense.amount,
+                categoryName = expense.category.name,
+                description = expense.description
+            )
+        }
     }
 
     override fun editExpense(expense: Expense) {
-        expenseManager.editExpense(
-            expense = expense
-        )
+        queries.transaction {
+            queries.update (
+                id = expense.id,
+                amount = expense.amount,
+                categoryName = expense.category.name,
+                description = expense.description
+            )
+        }
     }
 
     override fun deleteExpense(expense: Expense): List<Expense> {
-        return expenseManager.deleteExpense(
-            expense = expense
-        )
+        
     }
 
     override fun getCategories(): List<ExpenseCategory> {
-        return expenseManager.getCategories()
+        return queries.categories.executeAsList().map {
+            ExpenseCategory.valueOf(it)
+        }
     }
 }

@@ -8,6 +8,6 @@ fun MainViewController() = ComposeUIViewController {  }
 
 fun initKoin() {
     startKoin {
-        modules(appModule())
+        modules(appModule(AppDatabase.invoke(DatabaseDriverFactory().createDriver())))
     }.koin
 }
